@@ -115,3 +115,46 @@ Grid.prototype.serialize = function () {
     cells: cellState
   };
 };
+
+// Both tiles can merge
+Grid.prototype.tilesCanMerge = function (atile, btile) {
+    var merge = false;
+    if (atile.x === btile.x && atile.y !== btile.y) {
+        var max = btile.y;
+        var min = atile.y;
+        var x = atile.x;
+        if (atile.y > max) {
+            max = atile.y;
+            min = btile.y;
+        }
+
+        // Go throught each cell to know if is available, leave when is occupied.
+        var cell = null;
+        var occupied = false;
+        for (var y = min + 1; y < max && !occupied; y++) {
+            cell = {x: x, y: y};
+            occupied = !this.cellAvailable(cell);
+        }
+        // If any cell are not occupied then they can merge.
+        merge = !occupied;
+    } else if (atile.y === btile.y && atile.x !== btile.x) {
+        var max = btile.x;
+        var min = atile.x;
+        var y = atile.y;
+        if (atile.x > max) {
+            max = atile.x;
+            min = btile.x;
+        }
+
+        // Go throught each cell to know if is available, leave when is occupied.
+        var cell = null;
+        var occupied = false;
+        for (var x = min + 1; x < max && !occupied; x++) {
+            cell = {x: x, y: y};
+            occupied = !this.cellAvailable(cell);
+        }
+        merge = !occupied;
+    }
+
+    return merge;
+}
